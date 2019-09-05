@@ -1,5 +1,3 @@
-[![build pass](https://api.travis-ci.org/dwqs/area-puppeteer.svg?branch=master)](https://travis-ci.org/dwqs/area-puppeteer?branch=master) ![license](https://img.shields.io/badge/license-WTFPL%20--%20Do%20What%20the%20Fuck%20You%20Want%20to%20Public%20License-green.svg)
-
 # area-puppeteer
 基于 @dwqs/area-puppeteer 的中国行政区域抓取爬虫，数据同步到国家统计局2018年10月31日，优化地区code 的格式化（最精准），优化抓取失败时重试逻辑（不会因多次失败而终止程序），台湾/香港/澳门调整为省级数据。
 
@@ -10,7 +8,6 @@
 ## 数据更新
 
 ```
-git clone git@github.com:dwqs/area-puppeteer.git
 npm i
 npm start // 生成市县区数据
 npm run format // 格式化数据
@@ -34,4 +31,4 @@ Data['1302']
 ```
 
 ## License
-This repo is released under the [WTFPL](http://www.wtfpl.net/) – Do What the Fuck You Want to Public License.
+This repo is released under the [WTFPL](http://www.wtfpl.net/).

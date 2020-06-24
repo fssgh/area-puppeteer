@@ -37,7 +37,7 @@ const pcaa = {
 
 // 提取行政区域 code
 const reg = /0(?=0{2,})/;
-const target = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/#{route}.html';
+const target = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2019/#{route}.html';
 
 const spinner = ora({
     color: 'yellow'

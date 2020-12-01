@@ -1,12 +1,13 @@
 // 格式化数据
 const path = require('path');
 const fs = require('fs');
+const _ = require('lodash');
 const puppeteer = require('puppeteer');
 const ora = require('ora');
 const chalk = require('chalk');
 const awaitTo = require('async-await-error-handling');
 
-const { timeout, writeFileSync } = require('./utils');
+const { timeout, writeFileSync,writeTextFileSync } = require('./utils');
 
 const provinces = require('./provinces');
 const cities = require('./cities');
@@ -37,7 +38,7 @@ const pcaa = {
 
 // 提取行政区域 code
 const reg = /0(?=0{2,})/;
-const target = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2019/#{route}.html';
+const target = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/#{route}.html';
 
 const spinner = ora({
     color: 'yellow'
@@ -200,6 +201,16 @@ async function formatPCAAddress () {
     writeFileSync('pcaa.js', pcaa);
     await browser.close();
 }
+// 数据库导入格式
+function formatCSV (){
+    const allAddrs = _.concat(cities,areas); 
+    let csvText='code,text,parentCode\n';
+    _.forEach(allAddrs,(item) => {
+        csvText+=item.code+','+item.text+','+item.parentCode+'\n';
+    });
+    writeTextFileSync('pcaa.csv', csvText);
+}
 
-formatPCAddress()
-formatPCAAddress();
+//formatPCAddress();
+//formatPCAAddress();
+formatCSV();

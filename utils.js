@@ -16,8 +16,11 @@ function timeout (delay) {
 function writeFileSync (name, data) {
     fs.writeFileSync(path.resolve(__dirname, name), `module.exports=${JSON.stringify(data)}`);
 }
-
+function writeTextFileSync (name, data) {
+    fs.writeFileSync(path.resolve(__dirname, name), data);
+}
 module.exports = {
     writeFileSync: writeFileSync,
+    writeTextFileSync:writeTextFileSync,
     timeout: timeout
 };

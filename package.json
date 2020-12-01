@@ -5,10 +5,10 @@
         "async-await-error-handling": "^0.5.2",
         "chai": "^4.2.0",
         "chalk": "^4.1.0",
-        "mocha": "^8.0.1",
-        "ora": "^4.0.4",
-        "puppeteer": "^4.0.0",
-        "lodash":"^4.17.19"
+        "mocha": "^8.2.1",
+        "ora": "^5.1.0",
+        "puppeteer": "^5.5.0",
+        "lodash": "^4.17.20"
     },
     "description": "基于 puppeteer 的中国行政区域抓取爬虫(省市区)",
     "scripts": {

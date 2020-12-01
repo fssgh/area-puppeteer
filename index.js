@@ -17,7 +17,7 @@ const spinner2 = ora({
 
 const provinces = require('./provinces')['86'];
 const pcodes = [];
-const target = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2019/#{route}.html';
+const target = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/#{route}.html';
 
 let cities = [];
 
@@ -68,19 +68,20 @@ async function getAreasByCCode (page, city) {
     await page.goto(url);
 
     spinner2.text = chalk.blue(`正在抓取 ${provinces[city.parentCode]}/${city.text} 的县区数据：${url}`);
-
     areas = await page.evaluate((city, areas) => {
         let list = [...document.querySelectorAll('.countytable .countytr')];
+        let istowntr = false; // 是否是镇级
 
         if (!list.length) {
-            // 修正海南省-儋州市的区域数据
+            // 修正海儋州市，中山，东莞等待的区域数据
+            istowntr = true; 
             list = [...document.querySelectorAll('.towntable .towntr')];
         }
 
         list.forEach(el => {
             const t = el.innerText.split('\t');
             areas.push({
-                code: t[0].slice(0, 6), 
+                code: t[0].slice(0, istowntr? 9 : 6), 
                 text: t[1],
                 parentCode: `${city.code}`
             })
@@ -103,7 +104,7 @@ process.on('unhandledRejection', (err) => {
     if (!cities.length) {
         for(let i = 0, l = pcodes.length; i < l; i++) {
             const pcode = pcodes[i];
-            await timeout(3000);
+            await timeout(1000);
             const [err] = await awaitTo(getCitiesByPCode(page, pcode));
             if (err) {
                 // 这个重试主要是处理因避免耗时(Navigation Timeout Exceeded)导致的错误
@@ -123,7 +124,7 @@ process.on('unhandledRejection', (err) => {
 
     for(let i = 0, l = cities.length; i < l; i++) {
         const city = cities[i];
-        await timeout(3000);
+        await timeout(1000);
         const [err] = await awaitTo(getAreasByCCode(page, city));
         if (err) {
             // 这个重试主要是处理因避免耗时(Navigation Timeout Exceeded)导致的错误

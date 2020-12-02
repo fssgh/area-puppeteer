@@ -211,6 +211,6 @@ function formatCSV (){
     writeTextFileSync('pcaa.csv', csvText);
 }
 
-//formatPCAddress();
-//formatPCAAddress();
+formatPCAddress();
+formatPCAAddress();
 formatCSV();

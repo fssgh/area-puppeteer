@@ -129,7 +129,7 @@ process.on('unhandledRejection', (err) => {
         if (err) {
             // 这个重试主要是处理因避免耗时(Navigation Timeout Exceeded)导致的错误
             console.log('\n', chalk.red(`抓取数据失败，失败链接: ${url}，错误信息: ${err.message}，正在重试....\n`));
-            i--
+            i--;
         }
     }
 

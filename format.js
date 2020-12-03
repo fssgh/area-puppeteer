@@ -23,10 +23,24 @@ const pcodes = Object.keys(provinces['86']);
 */
 const filter = ['市辖区', '县', '省直辖县级行政区划', '自治区直辖县级行政区划'];
 
+const pcaacsv=['code,text,parentCode'];
+
+const pcacsv=['code,text,parentCode'];
+function pcaFillCsv(res,pcode){
+    _.forEach(res,(v,k) => {
+        pcacsv.push(`${k},${v},${pcode}`);
+    });
+}
+function pcaaFillCsv(res,pcode){
+    _.forEach(res,(v,k) => {
+        pcaacsv.push(`${k},${v},${pcode}`);
+    });
+}
 // 省市
 const pca = {
     '86': provinces['86']
 };
+pcaFillCsv(provinces['86'],'86');
 // 删除港澳
 delete pca['86']['81'];
 delete pca['86']['82'];
@@ -35,7 +49,7 @@ delete pca['86']['82'];
 const pcaa = {
     '86': provinces['86']
 };
-
+pcaaFillCsv(provinces['86'],'86');
 // 提取行政区域 code
 const reg = /0(?=0{2,})/;
 const target = 'http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/#{route}.html';
@@ -45,34 +59,25 @@ const spinner = ora({
 });
 
 
-function formatCode (code,level) {
-	if(level===1){
-		return code.slice(0, 2);
-	}else if(level===2){
-		return code.slice(0, 4);
-	}else if(level===3){
-		return code.slice(0, 6);
-	}else if(level===4){
-		return code.slice(0, 9);
-	}else{
-		return code;
-	}
-}
-
 // 省市联动
 function formatPCAddress () {
     pcodes.forEach(pcode => {
         if (pcode === '71') {
             // 台湾
             pca[pcode] = provinces['7101'];
+            pcaFillCsv(provinces['7101'],'7101');
         } else if (pcode === '81') {
             // 香港
             pca['86']['81'] = provinces['81'];
+            pcaFillCsv(provinces['81'],'81');
             pca['8101'] = provinces['8101'];
+            pcaFillCsv(provinces['8101'],'8101');
         }  else if (pcode === '82') {
             // 澳门
             pca['86']['82'] = provinces['82'];
+            pcaFillCsv(provinces['82'],'82');
             pca['8201'] = provinces['8201'];
+            pcaFillCsv(provinces['8201'],'8201');
         }else {
             const res = {};
             const pcities = cities.filter(city => city.parentCode === pcode);
@@ -81,16 +86,18 @@ function formatPCAddress () {
                     // 用第三级区域数据补充
                     const tmps = areas.filter(area => area.parentCode === city.code);
                     tmps.forEach(tmp => {
-                        res[formatCode(tmp.code,3)] = tmp.text.indexOf('办事处') > -1 ? tmp.text.slice(0, -3) : tmp.text;
+                        res[tmp.code] = tmp.text.indexOf('办事处') > -1 ? tmp.text.slice(0, -3) : tmp.text;
                     })
                 } else {
-                    res[formatCode(city.code,2)] = city.text;
+                    res[city.code] = city.text;
                 }
             });
             pca[pcode] = res;
+            pcaFillCsv(res,pcode);
         }
     });
     writeFileSync('pca.js', pca);
+    writeTextFileSync('pca.csv', pcacsv.join('\n'));
 }
 
 // 因为部分原处于第三级的区域提升到第二级，所以要重新抓取这部分区域对应的下一级区域数据
@@ -135,16 +142,20 @@ async function formatPCAAddress () {
         const pcode = pcodes[p];
         if (pcode === '71') {
             // 台湾
-            pcaa[pcode] = provinces[pcode];
-            pcaa['7101'] = provinces['7101'];
-        }else if (pcode === '81') {
+            pca[pcode] = provinces['7101'];
+            pcaaFillCsv(provinces['7101'],'7101');
+        } else if (pcode === '81') {
             // 香港
             pca['86']['81'] = provinces['81'];
+            pcaaFillCsv(provinces['81'],'81');
             pca['8101'] = provinces['8101'];
+            pcaaFillCsv(provinces['8101'],'8101');
         }  else if (pcode === '82') {
             // 澳门
             pca['86']['82'] = provinces['82'];
+            pcaaFillCsv(provinces['82'],'82');
             pca['8201'] = provinces['8201'];
+            pcaaFillCsv(provinces['8201'],'8201');
         }else {
             const res = {};
             const pcities = cities.filter(city => city.parentCode === pcode);
@@ -157,7 +168,7 @@ async function formatPCAAddress () {
                     for(let i = 0, l = pareas.length; i < l; i++) {
                         const pCurAreas = {};
                         const parea = pareas[i];
-                        const code = formatCode(parea.code,3);
+                        const code = parea.code;
                         res[code] = parea.text.indexOf('办事处') > -1 ? parea.text.slice(0, -3) : parea.text;
 
                         // 抓取第四级数据
@@ -173,44 +184,37 @@ async function formatPCAAddress () {
                             console.log('ddddd', data[0]);
                             data.forEach(item => {
                                 if (item.text !== '市辖区') {
-                                    pCurAreas[formatCode(item.code,4)] = item.text.indexOf('办事处') > -1 ? item.text.slice(0, -3) : item.text;
+                                    pCurAreas[item.code] = item.text.indexOf('办事处') > -1 ? item.text.slice(0, -3) : item.text;
                                 }
                             });
                             pcaa[code] = pCurAreas;
+                            pcaaFillCsv(pCurAreas,code);
                         }
                         await timeout(1000);
                     }
                 } else {
                     const curAreas = {};
-                    const cityCode = formatCode(pcity.code,2);
+                    const cityCode = pcity.code;
                     res[cityCode] = pcity.text;
 
                     // 第三级数据
                     pareas.forEach(parea => {
                         if (parea.text !== '市辖区') {
-                            curAreas[formatCode(parea.code, 3)] = parea.text.indexOf('办事处') > -1 ? parea.text.slice(0, -3) : parea.text;
+                            curAreas[parea.code] = parea.text.indexOf('办事处') > -1 ? parea.text.slice(0, -3) : parea.text;
                         }
                     });
                     pcaa[cityCode] = curAreas;
+                    pcaaFillCsv(curAreas,cityCode);
                 }
             }
             pcaa[pcode] = res;
+            pcaaFillCsv(res,pcode);
         }
     }
-
     writeFileSync('pcaa.js', pcaa);
+    writeTextFileSync('pcaa.csv', pcaacsv.join('\n'));
     await browser.close();
-}
-// 数据库导入格式
-function formatCSV (){
-    const allAddrs = _.concat(cities,areas); 
-    let csvText='code,text,parentCode\n';
-    _.forEach(allAddrs,(item) => {
-        csvText+=item.code+','+item.text+','+item.parentCode+'\n';
-    });
-    writeTextFileSync('pcaa.csv', csvText);
 }
 
 formatPCAddress();
 formatPCAAddress();
-formatCSV();

@@ -2,7 +2,7 @@
 基于 @dwqs/area-puppeteer 的中国行政区域抓取爬虫，数据同步到国家统计局2020年12月01日，优化地区code 的格式化（最精准），优化抓取失败时重试逻辑（不会因多次失败而终止程序），台湾/香港/澳门调整为省级数据。
 
 ## 数据来源
-* 国家统计局：[统计用区划代码和城乡划分代码](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2018/index.html)
+* 国家统计局：[统计用区划代码和城乡划分代码](http://www.stats.gov.cn/tjsj/tjbz/tjyqhdmhcxhfdm/2020/index.html)
 * 国家民政部：[中华人民共和国行政区划代码](http://www.mca.gov.cn/article/sj/tjbz/a/)
 
 ## 数据更新

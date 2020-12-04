@@ -15,8 +15,8 @@ npm run format // 格式化数据
 
 生成的数据包含两份：`cities.js` 和 `areas.js`，前者是市级数据，后者是县区数据
 
-格式化后会生成两份数据：`pca.js` 和 `pcaa.js`，前者仅省市数据，后者包含省市区数据
-
+格式化后会生成两份数据：`pca.js` 、`pca.csv` 和 `pcaa.js`、`pcaa.csv` ，前者仅省市数据，后者包含省市区数据
+csv文件便于导入数据库维护
 ```js
 import Data from 'path/to/pcaa';
 

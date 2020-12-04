@@ -41,9 +41,6 @@ const pca = {
     '86': provinces['86']
 };
 pcaFillCsv(provinces['86'],'86');
-// 删除港澳
-delete pca['86']['81'];
-delete pca['86']['82'];
 
 // 省市区
 const pcaa = {
@@ -64,6 +61,8 @@ function formatPCAddress () {
     pcodes.forEach(pcode => {
         if (pcode === '71') {
             // 台湾
+            pca['86']['71'] = provinces['71'];
+            pcaFillCsv(provinces['71'],'71');
             pca[pcode] = provinces['7101'];
             pcaFillCsv(provinces['7101'],'7101');
         } else if (pcode === '81') {
@@ -142,19 +141,21 @@ async function formatPCAAddress () {
         const pcode = pcodes[p];
         if (pcode === '71') {
             // 台湾
-            pca[pcode] = provinces['7101'];
+            pcaa['86']['71'] = provinces['71'];
+            pcaaFillCsv(provinces['71'],'71');
+            pcaa[pcode] = provinces['7101'];
             pcaaFillCsv(provinces['7101'],'7101');
         } else if (pcode === '81') {
             // 香港
-            pca['86']['81'] = provinces['81'];
+            pcaa['86']['81'] = provinces['81'];
             pcaaFillCsv(provinces['81'],'81');
-            pca['8101'] = provinces['8101'];
+            pcaa['8101'] = provinces['8101'];
             pcaaFillCsv(provinces['8101'],'8101');
         }  else if (pcode === '82') {
             // 澳门
-            pca['86']['82'] = provinces['82'];
+            pcaa['86']['82'] = provinces['82'];
             pcaaFillCsv(provinces['82'],'82');
-            pca['8201'] = provinces['8201'];
+            pcaa['8201'] = provinces['8201'];
             pcaaFillCsv(provinces['8201'],'8201');
         }else {
             const res = {};
